@@ -16,11 +16,11 @@ The CSS ids you will work with are:
 // TODO 2: Implement bubbleSort
 async function bubbleSort(array) {
     let n = array.length;
-    for (let i = 0; i < n ; i++) {
+    for (let i = 0; i < n; i++) {
         for (let j = n - 1; j > i; j--) {
-            if (array[j] < array[j - 1]) {
+            if (array[j].value < array[j - 1].value) {
                 swap(array, j, j - 1);
-                drawSwap(array, j, j - 1);
+
                 updateCounter(bubbleCounter);
                 await sleep();
             }
@@ -30,31 +30,30 @@ async function bubbleSort(array) {
 
 // TODO 3: Implement quickSort
 async function quickSort(array, left, right) {
-    if (left < right) {
-        let pivot = partition(array, left, right);
-        quickSort(array, left, pivot - 1);
-        quickSort(array, pivot + 1, right);
+    if (right - left > 0) {
+        var index = await partition(array, left, right);
+        if (left < (index - 1)) {
+            await quickSort(array, left, index - 1);
+        }
+        if (right > index) {
+            await quickSort(array, index, right);
+        }
     }
 }
 
 // TODOs 4 & 5: Implement partition
 async function partition(array, left, right) {
-    let pivot = array[right];
-    let i = left - 1;
-    for (let j = left; j < right; j++) {
-        if (array[j] < pivot) {
-            i++;
-            swap(array, i, j);
-            drawSwap(array, i, j);
-            updateCounter("#quickCounter");
-            sleep();
+    let pivot = array[Math.floor((right + left) / 2)].value;
+    while (left < right) {
+        while (array[left].value < pivot) { left++ }
+        while (array[right].value > pivot) { right-- }
+        if (left < right) {
+            swap(array, left, right)
+            updateCounter(quickCounter)
+            await sleep()
         }
     }
-    swap(array, i + 1, right);
-    drawSwap(array, i + 1, right);
-    updateCounter("#quickCounter");
-    sleep();
-    return i + 1;
+    return left + 1
 }
 
 // TODO 1: Implement swap
@@ -62,6 +61,8 @@ function swap(array, i, j) {
     let temp = array[i];
     array[i] = array[j];
     array[j] = temp;
+
+    drawSwap(array, j, i);
 }
 
 ///////////////////////////////////////////////////////////////////////
